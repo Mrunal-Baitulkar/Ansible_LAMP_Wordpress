@@ -9,8 +9,4 @@
     - php-fpm
     - wordpress
   
-  environment:
-    http_proxy: http://10.130.162.10:8080
-    https_proxy: http://10.130.162.10:8080
-    ftp_proxy: http://10.130.162.10:8080
  
