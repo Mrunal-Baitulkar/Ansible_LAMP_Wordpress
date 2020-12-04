@@ -1,12 +1,15 @@
 ---
-- name: Install WordPress, MariaDB, Nginx, and PHP-FPM
+- name: Installing Nginx,Mariabdb,phpfpm and wordpress
   hosts: [ansible_server]
-  remote_user: jiomediadev 
+  remote_user: root 
   become: yes
   roles:
     - mariadb
     - nginx
     - php-fpm
     - wordpress
+
+# environment:
+# https://yourproxyip:portno
   
  
