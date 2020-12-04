@@ -1,7 +1,7 @@
 ---
 - name: Download WordPress
   get_url: url=http://wordpress.org/wordpress-{{ wp_version }}.tar.gz dest=/srv/wordpress-{{ wp_version }}.tar.gz
-           sha256sum="{{ wp_sha256sum }}"
+          sha256sum="{{ wp_sha256sum }}"
 
 - name: Extract archive
   command: chdir=/srv/ /bin/tar xvf wordpress-{{ wp_version }}.tar.gz creates=/srv/wordpress
@@ -17,11 +17,32 @@
   register: "wp_salt"
   become: no
 
-- name: Create WordPress database
-  mysql_db: name={{ wp_db_name }} state=present
+- name: Create wpapp database 
+  mysql_db:
+    name: "{{ wp_db_name }}" 
+    login_user: root    
+    login_password: "{{mysql_root_password}}" 
+    login_host: localhost 
+    state: present
 
-- name: Create WordPress database user
-  mysql_user: name={{ wp_db_user }} password={{ wp_db_password }} priv={{ wp_db_name }}.*:ALL host='localhost' state=present
+#- mysql_user:
+#    login_user: root
+#    login_password: admin@111!
+
+#- name: Create WordPress database
+#  mysql_db: name={{ wp_db_name }} state=present 
+
+- name: Create user for wordpress db 
+  mysql_user: 
+    name: "{{ wp_db_user }}" 
+    password: "{{ wp_db_password}}" 
+    priv: "{{ wp_db_name }}.*:ALL" 
+    login_user: root 
+    login_password: "{{mysql_root_password}}" 
+    state: present
+
+#- name: Create WordPress database user
+#  mysql_user: name={{ wp_db_user }} password={{ wp_db_password }} priv={{ wp_db_name }}.*:ALL host='localhost' state=present
 
 - name: Copy WordPress config file
   template: src=wp-config.php dest=/srv/wordpress/
@@ -29,32 +50,32 @@
 - name: Change ownership of WordPress installation
   file: path=/srv/wordpress/ owner=wordpress group=wordpress state=directory recurse=yes
 
-- name: install SEManage
-  yum: pkg=policycoreutils-python state=present
+#- name: install SEManage
+#  yum: pkg=policycoreutils-python state=present
 
-- name: set the SELinux policy for the Wordpress directory
-  command: semanage fcontext -a -t httpd_sys_content_t "/srv/wordpress(/.*)?"
+#- name: set the SELinux policy for the Wordpress directory
+#  command: semanage fcontext -a -t httpd_sys_content_t "/srv/wordpress(/.*)?"
 
-- name: set the SELinux policy for wp-config.php
-  command: semanage fcontext -a -t httpd_sys_script_exec_t "/srv/wordpress/wp-config\.php"
+#- name: set the SELinux policy for wp-config.php
+#  command: semanage fcontext -a -t httpd_sys_script_exec_t "/srv/wordpress/wp-config\.php"
 
-- name: set the SELinux policy for wp-content directory
-  command: semanage fcontext -a -t httpd_sys_rw_content_t "/srv/wordpress/wp-content(/.*)?"
+#- name: set the SELinux policy for wp-content directory
+#  command: semanage fcontext -a -t httpd_sys_rw_content_t "/srv/wordpress/wp-content(/.*)?"
 
-- name: set the SELinux policy for the *.php files
-  command: semanage fcontext -a -t httpd_sys_script_exec_t "/srv/wordpress/.*\.php"
+#- name: set the SELinux policy for the *.php files
+#  command: semanage fcontext -a -t httpd_sys_script_exec_t "/srv/wordpress/.*\.php"
 
-- name: set the SELinux policy for the Upgrade directory
-  command: semanage fcontext -a -t httpd_sys_rw_content_t "/srv/wordpress/wp-content/upgrade(/.*)?"
+#- name: set the SELinux policy for the Upgrade directory
+#  command: semanage fcontext -a -t httpd_sys_rw_content_t "/srv/wordpress/wp-content/upgrade(/.*)?"
 
-- name: set the SELinux policy for the Uploads directory
-  command: semanage fcontext -a -t httpd_sys_rw_content_t "/srv/wordpress/wp-content/uploads(/.*)?"
+#- name: set the SELinux policy for the Uploads directory
+#  command: semanage fcontext -a -t httpd_sys_rw_content_t "/srv/wordpress/wp-content/uploads(/.*)?"
 
-- name: set the SELinux policy for the wp-includes php files
-  command: semanage fcontext -a -t httpd_sys_script_exec_t "/srv/wordpress/wp-includes/.*\.php"
+#- name: set the SELinux policy for the wp-includes php files
+#  command: semanage fcontext -a -t httpd_sys_script_exec_t "/srv/wordpress/wp-includes/.*\.php"
 
-- name: set the SELinux on all the Files
-  command: restorecon -Rv /srv/wordpress
+#- name: set the SELinux on all the Files
+#  command: restorecon -Rv /srv/wordpress
 
 - name: Start php-fpm Service
   service: name=php-fpm state=started enabled=yes

@@ -1,13 +1,16 @@
 ---
 - name: Install WordPress, MariaDB, Nginx, and PHP-FPM
-  hosts: [ansible_user]
-  remote_user: root
-  # remote_user: user
-  # sudo: yes
-
+  hosts: [ansible_server]
+  remote_user: jiomediadev 
+  become: yes
   roles:
-    - common
     - mariadb
     - nginx
     - php-fpm
     - wordpress
+  
+  environment:
+    http_proxy: http://10.130.162.10:8080
+    https_proxy: http://10.130.162.10:8080
+    ftp_proxy: http://10.130.162.10:8080
+ 

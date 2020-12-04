@@ -16,6 +16,7 @@
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
+define('WP_MEMORY_LIMIT', '128');
 define('DB_NAME', '{{ wp_db_name }}');
 
 /** MySQL database username */
@@ -72,8 +73,8 @@ define('WPLANG', '');
  * It is strongly recommended that plugin and theme developers use WP_DEBUG
  * in their development environments.
  */
-define('WP_DEBUG', false);
-
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
 /** Disable Automatic Updates Completely */
 define( 'AUTOMATIC_UPDATER_DISABLED', {{auto_up_disable}} );
 
@@ -81,10 +82,10 @@ define( 'AUTOMATIC_UPDATER_DISABLED', {{auto_up_disable}} );
 define( 'WP_AUTO_UPDATE_CORE', {{core_update_level}} );
 
 /* That's all, stop editing! Happy blogging. */
-
+error_reporting(E_ALL); ini_set('display_errors', '1');
 /** Absolute path to the WordPress directory. */
 if ( !defined('ABSPATH') )
-	define('ABSPATH', dirname(__FILE__) . '/');
+        define('ABSPATH', dirname(__FILE__) . '/');
 
 /** Sets up WordPress vars and included files. */
-require_once(ABSPATH . 'wp-settings.php');
+require_once(ABSPATH . 'wp-settings.php');  
